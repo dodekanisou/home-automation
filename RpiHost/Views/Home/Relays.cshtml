@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Doors";
+}
+<div class="row">
+    <div class="col-12">
+        <!-- Block buttons -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">You can control the following doors</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-action="refresh">
+                        <i class="fa fa-sync"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" id="doorList">
+                <!-- The buttons will appear here -->
+            </div>
+            <div class="hide">
+                <input type="hidden" id="api-get-devices" value="@Url.RouteUrl(new { controller = "Relay", action = "GetDevices" })" />
+                <input type="hidden" id="api-activate-device" value="@Url.RouteUrl(new { controller = "Relay", action = "ActivateDevice" })" />
+            </div>
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/mustache/mustache.min.js"></script>
+    <script id="buttonTemplate" type="x-tmpl-mustache">
+        {{#devices}}
+        <button class="btn btn-app" data-activateRelay="{{ id }}">
+            <i class="fas fa-{{ icon }}"></i> {{ name }}
+        </button>
+        {{/devices}}
+        {{^devices}}No devices found.({{/devices}}
+    </script>
+    <script id="alertTemplate" type="x-tmpl-mustach">
+        <div class="alert alert-{{ type }} alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <h5><i class="icon fas fa-{{ icon }}"></i> {{ header }}</h5>
+            {{ message }}
+        </div>
+    </script>
+    <script src="~/js/Relays.js"></script>
+}
