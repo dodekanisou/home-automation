@@ -90,11 +90,53 @@ sudo certbot --nginx
 ```
 
 Otherwise, you have to do it manually:
-```bash
+``` bash
 sudo apt-get install certbot
 sudo certbot certonly --manual --preferred-challenges=dns -d <YourDomain> -m <YourEmail>
 ```
 
+To edit nginx configuration:
+``` bash
+sudo nano /etc/nginx/sites-enabled/default
+sudo systemctl restart nginx
+```
+
+The nginx configuration:
+``` config
+server {
+        server_name _;
+        # SSL configuration
+        listen 9080 ssl default_server;
+        listen [::]:9080 ssl default_server;
+        ssl_certificate /etc/letsencrypt/live/public.domain.name/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/public.domain.name/privkey.pem;
+
+        root /var/www/rpihost/wwwroot;
+
+        # Try direct files first and then reverse proxy
+        try_files $uri @proxy;
+
+        location @proxy {
+                proxy_bind $server_addr;
+                proxy_pass http://localhost:5000;
+                proxy_http_version 1.1;
+                proxy_set_header   Upgrade $http_upgrade;
+                proxy_set_header   Connection keep-alive;
+                proxy_set_header   Host $host:$server_port;
+                proxy_cache_bypass $http_upgrade;
+                proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header   X-Forwarded-Proto $scheme;
+                # Needed to pass the external port as part of the host 
+                # since it was not a default 80/443 one
+                proxy_set_header   X-Forwarded-Host  $host:$server_port;
+                proxy_set_header   X-Forwarded-Port  $server_port;
+                # oAuth forced me to do that
+                proxy_buffer_size  128k;
+                proxy_buffers      4 256k;
+                proxy_busy_buffers_size 256k;
+        }
+}
+```
 
 ## RPI's ubuntu maintenance
 
@@ -112,6 +154,12 @@ Oneline bin only update
 sudo mv RpiHos* /var/www/rpihost/ && sudo chmod +x /var/www/rpihost/RpiHost && sudo systemctl restart rpihost && ls -la /var/www/rpihost/ 
 ```
 
+View service logs
+```bash
+sudo journalctl -fu rpihost.service
+```
+
+
 ## Handling secrets
 
 You should always treat your codebase as if it was public, thus no secrets should be stored in the repository. See [Microsoft docs reference](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1).
@@ -119,7 +167,8 @@ In this project's case, we are using the secret manager approach. Right click on
 
 ## Video stream reverse proxy
 
-In the RPI there is Motion installed with an RPI Camera module. We could use https://github.com/proxykit/ProxyKit to expose the feed but unfortunately the steam is not passing through.
+In the RPI there is Motion installed with an RPI Camera module. We could use https://github.com/proxykit/ProxyKit to expose the feed but unfortunately the steam is not passing through. This is why we implemented our own reverse proxy that flushes the buffers.
+
 
 ## TODO list
 
