@@ -224,7 +224,8 @@ namespace RpiHost
             {
                 var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
                 // Fix only iPhones where the issue manifests mostly
-                if (userAgent.Contains("iOS",StringComparison.OrdinalIgnoreCase))
+                if (userAgent.Contains("iOS",StringComparison.OrdinalIgnoreCase) ||
+                    userAgent.Contains("iPhone", StringComparison.OrdinalIgnoreCase))
                 {
                     options.SameSite = SameSiteMode.Unspecified;
                 }
