@@ -3,8 +3,8 @@
 This is a hobby project that was created during Christmas 2019 in order to:
 - Play with the Auth0.com service.
 - Discover what's new in .net core 3.1.
-- Get hands on experience with the [Azure Relay](https://docs.microsoft.com/en-us/azure/service-bus-relay/relay-what-is-it).
 - Allow people in my building to control public doors (including garage) from their mobile phones
+- Expose internal video feed from the motion project that runs in the RPI.
 
 If you are looking for open source well adopted solutions for your house automation, please consider:
 - https://www.openhab.org/
