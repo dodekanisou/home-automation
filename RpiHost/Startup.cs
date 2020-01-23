@@ -51,6 +51,8 @@ namespace RpiHost
             });
 
 
+            services.AddHttpClient<MotionStreamService>();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -128,7 +130,7 @@ namespace RpiHost
                         var postLogoutUri = context.Properties.RedirectUri;
                         if (!string.IsNullOrEmpty(postLogoutUri))
                         {
-                            if (postLogoutUri.StartsWith("/"))
+                            if (postLogoutUri.StartsWith("/", StringComparison.OrdinalIgnoreCase))
                             {
                                 // transform to absolute
                                 var request = context.Request;
@@ -151,6 +153,7 @@ namespace RpiHost
                 options.AddPolicy("relay:write", policy => policy.RequireClaim("permissions", "relay:write"));
                 options.AddPolicy("motion:read:images", policy => policy.RequireClaim("permissions", "motion:read:images"));
                 options.AddPolicy("motion:read:videos", policy => policy.RequireClaim("permissions", "motion:read:videos"));
+                options.AddPolicy("motion:feed:video", policy => policy.RequireClaim("permissions", "motion:feed:video"));
                 options.AddPolicy("use:webui", policy => policy.RequireClaim("permissions", "use:webui"));
                 options.AddPolicy("debug", policy => policy.RequireAssertion((context) =>
                 {
@@ -173,13 +176,13 @@ namespace RpiHost
 
             app.UseRouting();
 
-            // global cors policy
+            // global CORS policy
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            // Enable authentication middleware
+            // Enable authentication middle-ware
             app.UseAuthentication();
 
             app.UseAuthorization();

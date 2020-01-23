@@ -9,6 +9,6 @@ namespace RpiHost.Configuration
     {
         public List<RelayDevice> RelayDevices { get; set; }
 
-
+        public List<VideoFeed> VideoFeeds { get; set; }
     }
 }

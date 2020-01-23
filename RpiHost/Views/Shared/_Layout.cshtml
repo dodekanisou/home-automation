@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="~/lib/admin-lte/dist/css/adminlte.min.css">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link rel="stylesheet" href="~/site.css">
     @RenderSection("Styles", required: false)
     <meta name="api-token" content="@User.Claims.FirstOrDefault(i=>i.Type=="access_token")?.Value" />
 </head>
@@ -89,10 +90,21 @@
                                     </a>
                                 </li>
                             }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "motion:feed:video")).Succeeded)
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="VideoFeed" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon fa fa-film"></i>
+                                        <p>
+                                            Video feeds
+                                        </p>
+                                    </a>
+                                </li>
+                            }
                             @if ((await AuthorizationService.AuthorizeAsync(User, "motion:read:images")).Succeeded)
                             {
                                 <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="MotionScreenshots" class="nav-link">
+                                    <a asp-controller="Video" asp-action="Imageibrary" class="nav-link">
                                         <i class="nav-icon fa fa-images"></i>
                                         <p>
                                             Motion screenshots
@@ -103,8 +115,8 @@
                             @if ((await AuthorizationService.AuthorizeAsync(User, "motion:read:videos")).Succeeded)
                             {
                                 <li class="nav-item">
-                                    <a asp-controller="Home" asp-action="MotionVideos" class="nav-link">
-                                        <i class="nav-icon fa fa-film"></i>
+                                    <a asp-controller="Video" asp-action="VideoLibrary" class="nav-link">
+                                        <i class="nav-icon fa fa-file-video"></i>
                                         <p>
                                             Motion videos
                                         </p>

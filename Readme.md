@@ -1,9 +1,14 @@
 # Home automation project
 
 This is a hobby project that was created during Christmas 2019 in order to:
+- Play with the Auth0.com service.
+- Discover what's new in .net core 3.1.
+- Get hands on experience with the [Azure Relay](https://docs.microsoft.com/en-us/azure/service-bus-relay/relay-what-is-it).
 - Allow people in my building to control public doors (including garage) from their mobile phones
-- Play with the Auth0.com service
-- Discover what's new in .net core 3.1
+
+If you are looking for open source well adopted solutions for your house automation, please consider:
+- https://www.openhab.org/
+- https://www.home-assistant.io/
 
 ## Run in RPI
 
@@ -55,6 +60,16 @@ sudo systemctl status rpihost.service
 
 You should always treat your codebase as if it was public, thus no secrets should be stored in the repository. See [Microsoft docs reference](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1).
 In this project's case, we are using the secret manager approach. Right click on the project and select "Manage User Secrets" to specify your settings.
+
+## Video stream reverse proxy
+
+In the RPI there is Motion installed with an RPI Camera module. We could use https://github.com/proxykit/ProxyKit to expose the feed but unfortunately the steam is not passing through.
+
+## TODO list
+
+Perhaps setup a DDNS linux service through azure DNS
+https://www.lewisroberts.com/2016/05/28/using-azure-dns-dynamic-dns/
+
 
 ## Corners that were cut
 

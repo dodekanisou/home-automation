@@ -1,0 +1,22 @@
+﻿@model List<RpiHost.Configuration.VideoFeed>
+@{
+    ViewData["Title"] = "Video feeds";
+}
+<div class="row">
+    <div class="col-12">
+        @foreach (var feed in Model)
+        {
+        <!-- Block buttons -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-@feed.Icon"></i> @feed.Name</h3>
+            </div>
+            <div class="card-body" id="videoFeeds">
+                <!-- The buttons will appear here -->
+                <img src="@Url.RouteUrl(new { controller = "VideoFeed", action = "VideoFeed", feedId = feed.Id})" />
+            </div>
+        </div>
+        <!-- /.card -->
+        }
+    </div>
+</div>
