@@ -11,9 +11,10 @@ namespace RpiHost.Controllers
 {
     public class AccountController : Controller
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:Uri parameters should not be strings", Justification = "returnUrl is used by the framework")]
         public async Task Login(string returnUrl = "/")
         {
-            await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
+            await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl }).ConfigureAwait(false);
         }
 
         [Authorize]
@@ -22,11 +23,11 @@ namespace RpiHost.Controllers
             await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
             {
                 // Indicate here where Auth0 should redirect the user after a logout.
-                // Note that the resulting absolute Uri must be whitelisted in the 
+                // Note that the resulting absolute Uri must be white listed in the 
                 // **Allowed Logout URLs** settings for the client.
                 RedirectUri = Url.Action("Index", "Home")
-            });
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            }).ConfigureAwait(false);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).ConfigureAwait(false);
         }
 
         /// <summary>
