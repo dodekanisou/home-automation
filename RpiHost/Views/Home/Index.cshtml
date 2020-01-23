@@ -3,6 +3,26 @@
 }
 <div class="row">
     <div class="col-12">
-        <h1>It works</h1>
+        <!-- Block buttons -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Welcome</h3>
+            </div>
+            <div class="card-body" id="doorList">
+                @if ((await AuthorizationService.AuthorizeAsync(User, "relay:read")).Succeeded)
+                {
+                    <a class="btn btn-app" asp-controller="Home" asp-action="Relays" >
+                        <i class="fas fa-door-open"></i> Doors
+                    </a>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "motion:feed:video")).Succeeded)
+                {
+                    <a class="btn btn-app" asp-controller="VideoFeed" asp-action="Index">
+                        <i class="fas fa-film"></i> Video feed
+                    </a>
+                }
+            </div>
+        </div>
+        <!-- /.card -->
     </div>
 </div>
