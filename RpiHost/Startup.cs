@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -46,7 +47,14 @@ namespace RpiHost
 
             services.Configure<CookiePolicyOptions>(options =>
             {
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                // options.MinimumSameSitePolicy = SameSiteMode.None;
+                // Changed to address iOS 12 issue
+                // https://github.com/dotnet/aspnetcore/issues/14996
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+                options.OnAppendCookie = cookieContext =>
+                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                options.OnDeleteCookie = cookieContext =>
+                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
 
 
@@ -98,7 +106,7 @@ namespace RpiHost
                 options.Events = new OpenIdConnectEvents
                 {
                     // Configure to request access to API
-                    // Based on https://manage.auth0.com/dashboard/eu/dodekanisou/applications/uq5b3g65ilcPflTfj66tfPLIgGXINXEx/quickstart
+                    // Based on https://manage.auth0.com/dashboard/myapp/applications/random/quickstart
                     OnRedirectToIdentityProvider = context =>
                     {
                         context.ProtocolMessage.SetParameter("audience", Configuration["Auth0:Audience"]);
@@ -164,11 +172,25 @@ namespace RpiHost
             services.AddControllers();
 
             services.AddMvc();
+
+            // Play nice behind nginx
+            // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-3.1#forwarded-headers-middleware-options
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
+                // Multiple proxies in the test network
+                options.ForwardLimit = null;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
+            app.UseCookiePolicy();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -195,5 +217,19 @@ namespace RpiHost
                 endpoints.MapDefaultControllerRoute();
             });
         }
+
+        private void CheckSameSite(HttpContext httpContext, CookieOptions options)
+        {
+            if (options.SameSite == SameSiteMode.None)
+            {
+                var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+                // Fix only iPhones where the issue manifests mostly
+                if (userAgent.Contains("iOS",StringComparison.OrdinalIgnoreCase))
+                {
+                    options.SameSite = SameSiteMode.Unspecified;
+                }
+            }
+        }
+
     }
 }
