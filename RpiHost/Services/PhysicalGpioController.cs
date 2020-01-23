@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Device.Gpio;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RpiHost.Services
 {

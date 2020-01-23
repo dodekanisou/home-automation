@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RpiHost.Configuration
+﻿namespace RpiHost.Configuration
 {
     public class VideoFeed
     {
@@ -30,6 +25,6 @@ namespace RpiHost.Configuration
         /// <summary>
         /// The size of the buffer to use
         /// </summary>
-        public int? BufferSize {get; set; }
+        public int? BufferSize { get; set; }
     }
 }

@@ -1,18 +1,17 @@
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RpiHost.Services;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace RpiHost
 {
@@ -65,7 +64,8 @@ namespace RpiHost
                 options.Audience = Configuration["Auth0:Audience"];
             })
             .AddCookie()
-            .AddOpenIdConnect("Auth0", options => {
+            .AddOpenIdConnect("Auth0", options =>
+            {
                 // Set the authority to your Auth0 domain
                 options.Authority = Configuration["Auth0:Authority"];
 
@@ -112,7 +112,7 @@ namespace RpiHost
                         var handler = new JwtSecurityTokenHandler();
                         var accessToken = handler.ReadJwtToken(ctx.TokenEndpointResponse.AccessToken);
 
-                        foreach(var c in accessToken.Claims.Where(i=>i.Type == "permissions"))
+                        foreach (var c in accessToken.Claims.Where(i => i.Type == "permissions"))
                         {
                             ctx.Principal.Identities.FirstOrDefault().AddClaim(c);
                         }

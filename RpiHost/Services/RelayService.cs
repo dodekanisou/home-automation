@@ -16,7 +16,7 @@ namespace RpiHost.Services
 
         public RelayService(
             Config config,
-            IGpioController controller, 
+            IGpioController controller,
             ILogger<RelayService> logger)
         {
             this.config = config;
