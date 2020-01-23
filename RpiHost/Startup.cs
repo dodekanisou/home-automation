@@ -179,8 +179,6 @@ namespace RpiHost
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
-                // Multiple proxies in the test network
-                options.ForwardLimit = null;
             });
 
         }
