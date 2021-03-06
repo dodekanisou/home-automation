@@ -3,12 +3,24 @@
   "defaultProvider": "jsdelivr",
   "libraries": [
     {
-      "library": "admin-lte@3.1.0-rc",
+      "provider": "cdnjs",
+      "library": "admin-lte@3.0.5",
       "destination": "wwwroot/lib/admin-lte/"
     },
     {
-      "library": "mustache@4.1.0",
-      "destination": "wwwroot/lib/mustache/"
+      "provider": "cdnjs",
+      "library": "mustache.js@4.1.0",
+      "destination": "wwwroot/lib/mustache.js/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "overlayscrollbars@1.13.1",
+      "destination": "wwwroot/lib/overlayscrollbars/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot/lib/jquery/"
     }
   ]
 }
