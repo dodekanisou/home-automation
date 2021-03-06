@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,16 +46,18 @@ namespace RpiHost
             // And only a single service can have the pins open
             services.AddSingleton<RelayService>();
 
+            // This was originally added for iOS 12 endless redirection loop
+            // Then it was repurposed to allow debug in non https endpoints.
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // options.MinimumSameSitePolicy = SameSiteMode.None;
-                // Changed to address iOS 12 issue
-                // https://github.com/dotnet/aspnetcore/issues/14996
-                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+                //// options.MinimumSameSitePolicy = SameSiteMode.None;
+                //// Changed to address iOS 12 issue
+                //// https://github.com/dotnet/aspnetcore/issues/14996
+                //options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
                 options.OnAppendCookie = cookieContext =>
-                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                    AllowSameSiteForLocalDebug(cookieContext.Context, cookieContext.CookieOptions);
                 options.OnDeleteCookie = cookieContext =>
-                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                    AllowSameSiteForLocalDebug(cookieContext.Context, cookieContext.CookieOptions);
             });
 
 
@@ -216,18 +219,25 @@ namespace RpiHost
             });
         }
 
-        private void CheckSameSite(HttpContext httpContext, CookieOptions options)
+        private void AllowSameSiteForLocalDebug(HttpContext httpContext, CookieOptions options)
         {
-            if (options.SameSite == SameSiteMode.None)
+
+            if (options.SameSite == SameSiteMode.None && !httpContext.Request.IsHttps)
             {
-                var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
-                // Fix only iPhones where the issue manifests mostly
-                if (userAgent.Contains("iOS",StringComparison.OrdinalIgnoreCase) ||
-                    userAgent.Contains("iPhone", StringComparison.OrdinalIgnoreCase))
-                {
-                    options.SameSite = SameSiteMode.Unspecified;
-                }
+                options.SameSite = SameSiteMode.Unspecified;
             }
+
+            // TODO: Remove this if not needed to iOS anymore.
+            //if (options.SameSite == SameSiteMode.None)
+            //{
+            //    var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+            //    // Fix only iPhones where the issue manifests mostly
+            //    if (userAgent.Contains("iOS",StringComparison.OrdinalIgnoreCase) ||
+            //        userAgent.Contains("iPhone", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        options.SameSite = SameSiteMode.Unspecified;
+            //    }
+            //}
         }
 
     }
