@@ -1,7 +1,7 @@
 //
 // Component: Main Header
 //
- 
+
 .main-header {
   border-bottom: $main-header-bottom-border;
   z-index: $zindex-main-header;
@@ -21,7 +21,9 @@
       > .fas,
       > .far,
       > .fab,
-      > .glyphicon,
+      > .fal,
+      > .fad,
+      > .svg-inline--fa,
       > .ion {
         font-size: $font-size-sm;
       }
@@ -34,7 +36,7 @@
       margin: 0;
     }
 
-    &[class*='-right'] {
+    &[class*="-right"] {
       .dropdown-menu {
         left: auto;
         margin-top: -3px;
@@ -46,6 +48,11 @@
         }
       }
     }
+  }
+
+  &.dropdown-legacy .dropdown-menu {
+    top: $nav-link-height + $navbar-padding-y;
+    margin-top: 0;
   }
 }
 
@@ -73,7 +80,7 @@
 .form-control-navbar {
   border-right-width: 0;
 
-  & + .input-group-append {
+  + .input-group-append {
     margin-left: 0;
   }
 }
@@ -101,7 +108,7 @@
 
     &:focus {
       &,
-      & + .input-group-append .btn-navbar {
+      + .input-group-append .btn-navbar {
         background-color: $main-header-dark-form-control-focused-bg;
         border: $main-header-dark-form-control-focused-border !important;
         color: $main-header-dark-form-control-focused-color;
@@ -128,7 +135,7 @@
 
     &:focus {
       &,
-      & + .input-group-append .btn-navbar {
+      + .input-group-append .btn-navbar {
         background-color: $main-header-light-form-control-focused-bg;
         border: $main-header-light-form-control-focused-border !important;
         color: $main-header-light-form-control-focused-color;
