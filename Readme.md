@@ -179,3 +179,62 @@ https://www.lewisroberts.com/2016/05/28/using-azure-dns-dynamic-dns/
 ## Corners that were cut
 
 Dependency injection and testability of this project was not in scope of the MVP.
+
+
+## Docker deploy via IoT Hub
+
+A public docker image of this repo is available at https://hub.docker.com/repository/docker/dodekanisou/home-automation.
+
+The application.json can be overridden using docker volumes. Upload your json file in the RPI `/etc/iotedge/storage/home-automation.appsettings.json`.
+
+Assuming you have (installed and configured the IoT Edge runtime](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge) you will need to deploy a module:
+- Name: home-automation
+- Image url: dodekanisou/home-automation:2021-03-07 (or later)
+- Container create options: Note that we give access to gpiomem and make it privileged to access the gpio pins
+  ```
+  {
+    "HostConfig": {
+      "Binds": [
+        "/etc/iotedge/storage/home-automation.appsettings.json:/app/appsettings.json",
+        "/dev/gpiomem:/dev/gpiomem"
+      ],
+      "Privileged": true,
+      "PortBindings": {
+        "5000/tcp": [
+          {
+            "HostPort": "5000"
+          }
+        ]
+      }
+    }
+  }
+  ```
+
+### IoT Edge runtime on Ubuntu 20 in RPI 4b
+
+Here are the commands used to deploy the iot edge runtime:
+
+```
+apt install curl -y
+curl https://packages.microsoft.com/config/ubuntu/18.04/multiarch/prod.list > ./microsoft-prod.list
+cp ./microsoft-prod.list /etc/apt/sources.list.d/
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+cp ./microsoft.gpg /etc/apt/trusted.gpg.d/
+apt-get update
+apt-get install moby-engine -y
+apt list -a iotedge
+apt-get install iotedge -y
+# Add your connection string
+nano /etc/iotedge/config.yaml
+
+systemctl restart iotedge
+systemctl status iotedge
+iotedge check
+iotedge list
+docker ps
+
+
+# Troubleshoot
+journalctl -u iotedge -p warning
+iotedge logs home-automation -f
+```
