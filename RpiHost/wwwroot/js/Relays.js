@@ -77,5 +77,8 @@
     }
 
     generateDeviceList();
-
+    // Hide alerts handler
+    $('#doorList').on('click', 'button[data-dismiss="alert"]', function () {
+        $(this).parent().remove()
+    });
 })(jQuery)
