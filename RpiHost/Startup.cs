@@ -190,10 +190,13 @@ namespace RpiHost
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // https://dev.to/ianknighton/hosting-a-net-core-app-with-nginx-and-let-s-encrypt-1m50
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+            // app.UseForwardedHeaders(new ForwardedHeadersOptions
+            // {
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            // });
+            // Redirects were throwing back to http instead of https. Trying the default options.
+            app.UseForwardedHeaders();
+
 
             app.UseCookiePolicy();
 
