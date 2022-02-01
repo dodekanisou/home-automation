@@ -2,7 +2,7 @@
 
 This is a hobby project that was created during Christmas 2019 in order to:
 - Play with the Auth0.com service.
-- Discover what's new in .net core 3.1.
+- Discover what's new in .net core 3.1 (and upgrade to all the way to .net 6.0)
 - Allow people in my building to control public doors (including garage) from their mobile phones
 - Expose internal video feed from the motion project that runs in the RPI.
 
@@ -14,7 +14,7 @@ If you are looking for open source well adopted solutions for your house automat
 
 Publish the web host.
 
-Zip the contents of `bin\Release\netcoreapp3.1\publish` and transfer the zip file in the RPI.
+Zip the contents of `bin\Release\net6.0\publish` and transfer the zip file in the RPI.
 
 Unzip the zip into `/var/www/rpihost`.
 ``` bash
@@ -170,12 +170,6 @@ In this project's case, we are using the secret manager approach. Right click on
 In the RPI there is Motion installed with an RPI Camera module. We could use https://github.com/proxykit/ProxyKit to expose the feed but unfortunately the steam is not passing through. This is why we implemented our own reverse proxy that flushes the buffers.
 
 
-## TODO list
-
-Perhaps setup a DDNS linux service through azure DNS
-https://www.lewisroberts.com/2016/05/28/using-azure-dns-dynamic-dns/
-
-
 ## Corners that were cut
 
 Dependency injection and testability of this project was not in scope of the MVP.
@@ -189,7 +183,7 @@ The application.json can be overridden using docker volumes. Upload your json fi
 
 Assuming you have (installed and configured the IoT Edge runtime](https://docs.microsoft.com/en-us/azure/iot-edge/how-to-install-iot-edge) you will need to deploy a module:
 - Name: home-automation
-- Image url: dodekanisou/home-automation:2021-03-07 (or later)
+- Image url: dodekanisou/home-automation:2022-02-01 (or later)
 - Container create options: Note that we give access to gpiomem and make it privileged to access the gpio pins
   ```
   {
