@@ -3,23 +3,5 @@ updates:
 - package-ecosystem: nuget
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: Microsoft.AspNetCore.Authentication.JwtBearer
-    versions:
-    - 5.0.2
-    - 5.0.4
-  - dependency-name: Microsoft.AspNetCore.Authentication.OpenIdConnect
-    versions:
-    - 5.0.2
-    - 5.0.4
-  - dependency-name: Iot.Device.Bindings
-    versions:
-    - 1.3.0
-  - dependency-name: Microsoft.VisualStudio.Web.CodeGeneration.Design
-    versions:
-    - 5.0.1
-  - dependency-name: Microsoft.CodeAnalysis.FxCopAnalyzers
-    versions:
-    - 3.3.2
