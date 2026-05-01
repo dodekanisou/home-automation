@@ -12,6 +12,7 @@ using RpiHost.Services;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -32,14 +33,6 @@ namespace RpiHost
             var config = new Configuration.Config();
             Configuration.Bind("Config", config);
             services.AddSingleton(config);
-             
-            // Play nice behind nginx
-            // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-3.1#forwarded-headers-middleware-options
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
-            });
 
             // Only a single controller can control the pins
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -189,14 +182,30 @@ namespace RpiHost
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // https://dev.to/ianknighton/hosting-a-net-core-app-with-nginx-and-let-s-encrypt-1m50
-            // app.UseForwardedHeaders(new ForwardedHeadersOptions
-            // {
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            // });
-            // Redirects were throwing back to http instead of https. Trying the default options.
-            app.UseForwardedHeaders();
 
+            // Play nice behind nginx
+            // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer
+            // https://dev.to/ianknighton/hosting-a-net-core-app-with-nginx-and-let-s-encrypt-1m50
+            // Redirects were throwing back to http instead of https. Configure known proxies explicitly.
+            var forwardedHeadersOptions = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto
+            };
+            // In .net 10.0 you need to explicitly configure known proxies or networks.
+            var knownProxies = Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>();
+            if (knownProxies != null)
+            {
+                foreach (var proxy in knownProxies)
+                {
+                    if (IPAddress.TryParse(proxy, out var ip))
+                    {
+                        forwardedHeadersOptions.KnownProxies.Add(ip);
+                    }
+                }
+            }
+
+            app.UseForwardedHeaders(forwardedHeadersOptions);
 
             app.UseCookiePolicy();
 
