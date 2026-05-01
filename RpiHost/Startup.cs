@@ -32,6 +32,14 @@ namespace RpiHost
             var config = new Configuration.Config();
             Configuration.Bind("Config", config);
             services.AddSingleton(config);
+             
+            // Play nice behind nginx
+            // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-3.1#forwarded-headers-middleware-options
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
+            });
 
             // Only a single controller can control the pins
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -175,14 +183,6 @@ namespace RpiHost
             services.AddControllers();
 
             services.AddMvc();
-
-            // Play nice behind nginx
-            // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-3.1#forwarded-headers-middleware-options
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto;
-            });
 
         }
 
