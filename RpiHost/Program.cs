@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using DotNetEnv;
 
 namespace RpiHost
 {
@@ -7,6 +8,7 @@ namespace RpiHost
     {
         public static void Main(string[] args)
         {
+            Env.TraversePath().Load();
             CreateHostBuilder(args).Build().Run();
         }
 

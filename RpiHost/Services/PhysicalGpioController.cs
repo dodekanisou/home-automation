@@ -10,7 +10,7 @@ namespace RpiHost.Services
 
         public PhysicalGpioController(ILogger<PhysicalGpioController> logger)
         {
-            controller = new GpioController(PinNumberingScheme.Logical);
+            controller = new GpioController();
             this.logger = logger;
         }
 

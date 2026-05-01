@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/docker-image.yml" />
+    <File Path="Dockerfile" />
+    <File Path="Readme.md" />
+  </Folder>
+  <Project Path="RpiHost/RpiHost.csproj" />
+</Solution>

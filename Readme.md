@@ -2,7 +2,7 @@
 
 This is a hobby project that was created during Christmas 2019 in order to:
 - Play with the Auth0.com service.
-- Discover what's new in .net core 3.1 (and upgrade to all the way to .net 6.0)
+- Discover what's new in .net core 3.1 (and upgrade to all the way to .net 10.0)
 - Allow people in my building to control public doors (including garage) from their mobile phones
 - Expose internal video feed from the motion project that runs in the RPI.
 
@@ -14,7 +14,7 @@ If you are looking for open source well adopted solutions for your house automat
 
 Publish the web host.
 
-Zip the contents of `bin\Release\net6.0\publish` and transfer the zip file in the RPI.
+Zip the contents of `bin\Release\net10.0\publish` and transfer the zip file in the RPI.
 
 Unzip the zip into `/var/www/rpihost`.
 ``` bash
@@ -72,10 +72,13 @@ sudo systemctl start rpihost.service
 ## Running behind nginx
 
 Read the following articles:
-- https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-3.1#configure-nginx
-- https://certbot.eff.org/lets-encrypt/ubuntubionic-nginx
+- [Asp.Net Core in Linux with Nginx](https://learn.microsoft.com/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-10.0&tabs=linux-ubuntu#configure-nginx)
+- [Let's encrypt witn Nginx](https://certbot.eff.org/instructions?ws=nginx&os=pip)
 
-Which boils down to:
+> Warning: The following past of this section hasn't been updated
+> and may not work as expected anymore.
+
+Which back in 2019 used to boil down to:
 ``` bash
 sudo apt-get install nginx
 sudo nano /etc/nginx/sites-enabled/default
@@ -162,8 +165,9 @@ sudo journalctl -fu rpihost.service
 
 ## Handling secrets
 
-You should always treat your codebase as if it was public, thus no secrets should be stored in the repository. See [Microsoft docs reference](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1).
-In this project's case, we are using the secret manager approach. Right click on the project and select "Manage User Secrets" to specify your settings.
+You should always treat your codebase as if it was public, thus no secrets should be stored in the repository. See [Microsoft docs reference](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-10.0&tabs=windows).
+In this project's case, we switched to environment variables to store our secrets and use a `.env` file based on the `.env.sample` adding additional settings found in the `RpiHost\appsettings.json` file.
+
 
 ## Video stream reverse proxy
 
