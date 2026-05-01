@@ -192,16 +192,25 @@ namespace RpiHost
                 ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto
             };
-            // In .net 10.0 you need to explicitly configure known proxies or networks.
-            var knownProxies = Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>();
-            if (knownProxies != null)
+            // In .net 10.0 you need to explicitly configure known IP networks.
+            var knownNetworks = Configuration.GetSection("ForwardedHeaders:KnownNetworks").Get<string[]>();
+            if (knownNetworks != null)
             {
-                foreach (var proxy in knownProxies)
+                foreach (var network in knownNetworks)
                 {
-                    if (IPAddress.TryParse(proxy, out var ip))
+                    if (System.Net.IPNetwork.TryParse(network, out var ipNetwork))
                     {
-                        forwardedHeadersOptions.KnownProxies.Add(ip);
+                        forwardedHeadersOptions.KnownIPNetworks.Add(ipNetwork);
                     }
+                }
+            }
+
+            if (knownNetworks == null || knownNetworks.Length == 0)
+            {
+                if (env.IsDevelopment())
+                {
+                    forwardedHeadersOptions.KnownIPNetworks.Add(
+                        new System.Net.IPNetwork(IPAddress.Loopback, 8));
                 }
             }
 
