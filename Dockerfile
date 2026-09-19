@@ -1,6 +1,10 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# syntax=docker/dockerfile:1
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update \
+    && apt-get install -y --no-install-recommends libgpiod2
 WORKDIR /app
 EXPOSE 5000
 
